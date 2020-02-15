@@ -3,9 +3,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Sock {
 
-    public static int totalSocks;
-    public static int destroyedSocks;
-
     private int maxSocks;
     private String color;
     private int producedSocks;
