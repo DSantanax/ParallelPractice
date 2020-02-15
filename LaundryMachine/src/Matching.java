@@ -21,6 +21,7 @@ public class Matching implements Runnable {
 
         // Sock.destroyedSocks < Sock.allSocks
         //use bq?
+        
         while(true){
             try {
                 Thread.sleep(3000);
