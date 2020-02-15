@@ -10,13 +10,9 @@ public class Washer implements Runnable {
 
     @Override
     public void run() {
-        try 
-        {
-            // or OR and?
-            //TODO: fix matching call to remove Sock < Sock instead and use empty
-            //SEND DONE Signal!
-        for(String str = bq.take(); !str.equals("Done"); str = bq.take()){
-            Thread.sleep(6000);
+        try {
+            for(String str = bq.take(); !str.equals("Done"); str = bq.take()){
+            Thread.sleep(5000);
             Sock.destroySocks();
             System.out.format("Washer Thread: Destroyed %s socks Total Destroyed: %d%n", str, Sock.destroyedSocks);
             }

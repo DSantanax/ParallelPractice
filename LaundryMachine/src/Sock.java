@@ -3,12 +3,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Sock {
 
+    public static int totalSocks;
+    public static int destroyedSocks;
+
     private int maxSocks;
     private String color;
     private int producedSocks;
-    public static int totalSocks;
-    public static int destroyedSocks;
-    private static int matchedSocks;
+    private int matchedSocks;
     private BlockingQueue<String> bq;
     private AtomicBoolean done = new AtomicBoolean();
 
@@ -63,8 +64,10 @@ public class Sock {
         // TODO: Find a way to cut matching to send signal to finish
         //TODO: fix prime number call
         try {
-            if (matchedSocks < totalSocks) {
-                if (producedSocks % 2 == 0 && (producedSocks < totalSocks)) {
+            if (matchedSocks < maxSocks) {
+                //produced socks!= maxSocks or totalSocks?
+                //produce cannot keep up with the matched
+                if ((producedSocks % 2 == 0)) {
                     bq.put(color);
                     matchedSocks = matchedSocks +2;
                     System.out.format(

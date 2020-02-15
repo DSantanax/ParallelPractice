@@ -25,12 +25,11 @@ public class Matching implements Runnable {
     public void run() {
         // TODO: Fix Queue to match with total socks and inside queue max!
 
-        // Sock.destroyedSocks < Sock.allSocks
-        // use bq?
+        // Thread washer immediately takes
 
         while (!done) {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(2500);
                 blue.matchingSocks();
                 red.matchingSocks();
                 orange.matchingSocks();
