@@ -8,6 +8,7 @@ public class Sock {
     private int producedSocks;
     public static int totalSocks;
     public static int destroyedSocks;
+    private static int matchedSocks;
     private BlockingQueue<String> bq;
     private AtomicBoolean done = new AtomicBoolean();
 
@@ -18,51 +19,63 @@ public class Sock {
         bq = blockq;
         totalSocks = totalSocks + maxSocks;
         destroyedSocks = 0;
+        matchedSocks = 0;
     }
 
-    public boolean isDone(){
+    public boolean isDone() {
         return done.get();
     }
 
     public synchronized String getSockColor() {
         return this.color;
     }
-    public static synchronized void destroySocks(){
+
+    public static synchronized void destroySocks() {
         destroyedSocks = destroyedSocks + 2;
     }
+
     public synchronized int getProducedSocks() {
         return this.producedSocks;
     }
+
     public synchronized int getMaxSocks() {
         return this.maxSocks;
     }
+
     public synchronized void createSocks() {
-        //check if done
-        if(producedSocks >= maxSocks) {
+        // check if done
+        if (producedSocks >= maxSocks) {
             done.getAndSet(true);
         }
 
-        //check overflow production
+        // check overflow production
         else if ((producedSocks + 1) > maxSocks) {
             producedSocks += (maxSocks - producedSocks);
             System.out.format("%s Sock: Produced %d of %d %s Socks%n", color, producedSocks, maxSocks, color);
         } else {
-            //else add 1
+            // else add 1
             producedSocks = producedSocks + 1;
             System.out.format("%s Sock: Produced %d of %d %s Socks%n", color, producedSocks, maxSocks, color);
         }
     }
 
     public synchronized void matchingSocks() {
-        //TODO: Find a way to cut matching to send signal to finish
-            try {
-                if(getProducedSocks() % 2 == 0){
-                bq.put(color);
-                System.out.format("Matching Thread: Send %s Socks to Washer. Total Socks %d. Total inside queue %d%n", 
-                this.color, totalSocks, bq.size());
+        // TODO: Find a way to cut matching to send signal to finish
+        //TODO: fix prime number call
+        try {
+            if (matchedSocks < totalSocks) {
+                if (producedSocks % 2 == 0 && (producedSocks < totalSocks)) {
+                    bq.put(color);
+                    matchedSocks = matchedSocks +2;
+                    System.out.format(
+                            "Matching Thread: Send %s Socks to Washer. Total Socks %d. Total inside queue %d%n",
+                            this.color, totalSocks, bq.size());
                 }
-            } catch (InterruptedException e) {
-                System.err.println("Not done adding!");
+            } else {
+                Matching.setDone();
             }
+        } catch (InterruptedException e) {
+            System.err.println("Not done adding!");
+        }
     }
 }

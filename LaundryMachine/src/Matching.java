@@ -1,11 +1,12 @@
 import java.util.concurrent.BlockingQueue;
 
 public class Matching implements Runnable {
-    BlockingQueue<String> bq;
+    private BlockingQueue<String> bq;
     private Sock blue;
     private Sock red;
     private Sock orange;
     private Sock green;
+    private volatile static boolean done;
 
     public Matching(BlockingQueue<String> bq, Sock blu, Sock rd, Sock org, Sock grn) {
         this.bq = bq;
@@ -13,6 +14,11 @@ public class Matching implements Runnable {
         red = rd;
         orange = org;
         green = grn;
+        done = false;
+    }
+
+    public static void setDone() {
+        done = true;
     }
 
     @Override
@@ -20,20 +26,23 @@ public class Matching implements Runnable {
         // TODO: Fix Queue to match with total socks and inside queue max!
 
         // Sock.destroyedSocks < Sock.allSocks
-        //use bq?
-        
-        while(true){
+        // use bq?
+
+        while (!done) {
             try {
                 Thread.sleep(3000);
-                
                 blue.matchingSocks();
                 red.matchingSocks();
                 orange.matchingSocks();
                 green.matchingSocks();
-                
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }        
+        }
+
+        try {
+            bq.put("Done");
+        } catch (InterruptedException e) { e.printStackTrace(); }
     }
 }
