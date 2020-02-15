@@ -7,6 +7,8 @@ public class Sock {
     private String color;
     private int producedSocks;
     private int matchedSocks;
+    private static int totalSocks;
+    private static int destroyedSocks;
     private BlockingQueue<String> bq;
     private AtomicBoolean done = new AtomicBoolean();
 
