@@ -33,8 +33,8 @@ public class SockMatching {
         Thread matching = new Thread(new Matching(destroyer, bl, rd, org, grn));
         matching.start();
         
-        // Thread washer = new Thread(new Washer(destroyer));
-        // washer.start();
+        Thread washer = new Thread(new Washer(destroyer));
+        washer.start();
 
     }
 }

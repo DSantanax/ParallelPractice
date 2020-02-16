@@ -7,7 +7,7 @@ public class SockProducer implements Runnable {
     public void run() {
         while (!sock.isDone()) {
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1500);
                 sock.createSocks();
             } catch (InterruptedException e) {
 
