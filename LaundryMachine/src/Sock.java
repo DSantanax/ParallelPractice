@@ -57,24 +57,24 @@ public class Sock {
             producedSocks = producedSocks + 1;
             if (producedSocks % 2 == 0)
                 producer.add(color);
-             System.out.format("%s Sock: Produced %d of %d %s Socks%n", color, producedSocks, maxSocks, color);
-            
+            System.out.format("%s Sock: Produced %d of %d %s Socks%n", color, producedSocks, maxSocks, color);
+
         }
     }
 
     public synchronized void matchingSocks() {
         // TODO: Fix matchingSocks loop until no more
         try {
-            if ((pairs+1) < maxSocks) {
+            if ((pairs + 1) < maxSocks) {
                 // produce cannot keep up with the matched
                 String str = producer.take();
-                pairs = pairs +2;
+                pairs = pairs + 2;
                 // remove pair from producer
                 dest.put(str);
                 System.out.format("Matching Thread: Send %s Socks to Washer. Total Socks %d. Total inside queue %d%n",
                         this.color, totalSocks, producer.size());
             } else {
-                if(count == 4)
+                if (count == 4)
                     Matching.setDone();
                 count++;
             }
