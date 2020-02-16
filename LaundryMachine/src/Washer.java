@@ -11,9 +11,9 @@ public class Washer implements Runnable {
     @Override
     public void run() {
         try {
+            Thread.sleep(4000);
             for(String str = bq.take(); !str.equals("Done"); str = bq.take()){
             System.out.format("Washer Thread: Destroyed %s socks%n", str);
-            Thread.sleep(4000);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

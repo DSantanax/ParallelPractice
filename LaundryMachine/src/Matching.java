@@ -36,7 +36,6 @@ public class Matching implements Runnable {
             }
         }
         try {
-            System.out.println("Done");
             dest.put("Done");
         } catch (InterruptedException e) {
             e.printStackTrace();
