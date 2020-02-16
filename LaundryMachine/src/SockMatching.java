@@ -8,13 +8,15 @@ public class SockMatching {
 
     public static void main(String[] args) {
         BlockingQueue<String> bq = new ArrayBlockingQueue<>(500);
+        BlockingQueue<String> destroyer = new ArrayBlockingQueue<>(500);
+
         int rand = 10;
         Random rn = new Random();
 
-        Sock bl = new Sock(rn.nextInt(rand) + 1, colors[0], bq);
-        Sock rd = new Sock(rn.nextInt(rand) + 1, colors[1], bq);
-        Sock org = new Sock(rn.nextInt(rand) + 1, colors[2], bq);
-        Sock grn = new Sock(rn.nextInt(rand) + 1, colors[3], bq);
+        Sock bl = new Sock(rn.nextInt(rand) + 1, colors[0], bq, destroyer);
+        Sock rd = new Sock(rn.nextInt(rand) + 1, colors[1], bq, destroyer);
+        Sock org = new Sock(rn.nextInt(rand) + 1, colors[2], bq, destroyer);
+        Sock grn = new Sock(rn.nextInt(rand) + 1, colors[3], bq, destroyer);
 
         Thread blue = new Thread(new SockProducer(bl));
         blue.start();
@@ -28,11 +30,11 @@ public class SockMatching {
         Thread green = new Thread(new SockProducer(grn));
         green.start();
 
-        Thread matching = new Thread(new Matching(bq, bl, rd, org, grn));
+        Thread matching = new Thread(new Matching(destroyer, bl, rd, org, grn));
         matching.start();
         
-        Thread washer = new Thread(new Washer(bq));
-        washer.start();
+        // Thread washer = new Thread(new Washer(destroyer));
+        // washer.start();
 
     }
 }

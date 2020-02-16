@@ -1,3 +1,4 @@
+import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -6,20 +7,18 @@ public class Sock {
     private int maxSocks;
     private String color;
     private int producedSocks;
-    private int matchedSocks;
     private static int totalSocks;
-    private static int destroyedSocks;
-    private BlockingQueue<String> bq;
+    private BlockingQueue<String> producer;
+    private BlockingQueue<String> dest;
     private AtomicBoolean done = new AtomicBoolean();
 
-    public Sock(int maxSocks, String color, BlockingQueue<String> blockq) {
+    public Sock(int maxSocks, String color, BlockingQueue<String> blockq, BlockingQueue<String> dst) {
         this.maxSocks = maxSocks;
         this.color = color;
         producedSocks = 0;
-        bq = blockq;
+        producer = blockq;
         totalSocks = totalSocks + maxSocks;
-        destroyedSocks = 0;
-        matchedSocks = 0;
+        dest = dst;
     }
 
     public boolean isDone() {
@@ -28,10 +27,6 @@ public class Sock {
 
     public synchronized String getSockColor() {
         return this.color;
-    }
-
-    public static synchronized void destroySocks() {
-        destroyedSocks = destroyedSocks + 2;
     }
 
     public synchronized int getProducedSocks() {
@@ -44,34 +39,41 @@ public class Sock {
 
     public synchronized void createSocks() {
         // check if done
-        if (producedSocks >= maxSocks) {
+        if (producedSocks == maxSocks) {
             done.getAndSet(true);
         }
-
         // check overflow production
         else if ((producedSocks + 1) > maxSocks) {
             producedSocks += (maxSocks - producedSocks);
+            producer.add(color);
             System.out.format("%s Sock: Produced %d of %d %s Socks%n", color, producedSocks, maxSocks, color);
+
         } else {
             // else add 1
             producedSocks = producedSocks + 1;
+            producer.add(color);
             System.out.format("%s Sock: Produced %d of %d %s Socks%n", color, producedSocks, maxSocks, color);
         }
     }
 
     public synchronized void matchingSocks() {
-        // TODO: Find a way to cut matching to send signal to finish
-        //TODO: fix prime number call
+        // TODO: Fix matchingSocks
+        HashSet<String> hsm = new HashSet<>();
         try {
-            if (matchedSocks < maxSocks) {
-                //produced socks!= maxSocks or totalSocks?
-                //produce cannot keep up with the matched
-                if ((producedSocks % 2 == 0)) {
-                    bq.put(color);
-                    matchedSocks = matchedSocks +2;
-                    System.out.format(
-                            "Matching Thread: Send %s Socks to Washer. Total Socks %d. Total inside queue %d%n",
-                            this.color, totalSocks, bq.size());
+            if (!producer.isEmpty()) {
+                // produce cannot keep up with the matched
+                for (String str : producer) {
+                    if (hsm.contains(str)) {
+                        //remove pair
+                        hsm.remove(str);
+                        String clr = producer.take();
+                        dest.put(clr);
+                        System.out.format(
+                                "Matching Thread: Send %s Socks to Washer. Total Socks %d. Total inside queue %d%n",
+                                this.color, totalSocks, producer.size());
+                    } else {
+                        hsm.add(color);
+                    }
                 }
             } else {
                 Matching.setDone();
