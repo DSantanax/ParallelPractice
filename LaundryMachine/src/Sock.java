@@ -11,6 +11,7 @@ public class Sock {
     private BlockingQueue<String> dest;
     private int pairs;
     private static int count;
+    private boolean flag;
     private AtomicBoolean done = new AtomicBoolean();
 
     public Sock(int maxSocks, String color, BlockingQueue<String> blockq, BlockingQueue<String> dst) {
@@ -21,6 +22,7 @@ public class Sock {
         count = 0;
         totalSocks = totalSocks + maxSocks;
         dest = dst;
+        flag = false;
     }
 
     public boolean isDone() {
@@ -66,17 +68,20 @@ public class Sock {
         // TODO: Fix matchingSocks loop until no more
         try {
             if ((pairs + 1) < maxSocks) {
-                // produce cannot keep up with the matched
                 String str = producer.take();
                 pairs = pairs + 2;
                 // remove pair from producer
                 dest.put(str);
                 System.out.format("Matching Thread: Send %s Socks to Washer. Total Socks %d. Total inside queue %d%n",
-                        this.color, totalSocks, producer.size());
+                        str, totalSocks, producer.size());
             } else {
-                if (count == 4)
-                    Matching.setDone();
-                count++;
+                if(!flag){
+                    count++;
+                    flag = true;
+                }
+                if (count == 4){
+                        Matching.setDone();
+                }
             }
         } catch (InterruptedException e) {
             System.err.println("Not done adding!");

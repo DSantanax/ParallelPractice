@@ -26,9 +26,13 @@ public class Matching implements Runnable {
         while (!done) {
             try {
                 Thread.sleep(3500);
+                
                 blue.matchingSocks();
+
                 red.matchingSocks();
+
                 orange.matchingSocks();
+
                 green.matchingSocks();
 
             } catch (InterruptedException e) {
