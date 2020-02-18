@@ -8,10 +8,10 @@ public class SockMatching {
 
     public static void main(String[] args) {
         Random rn = new Random();
-        int frstRand = rn.nextInt(100);
-        int scdRand = rn.nextInt(100);
-        int thrdRand = rn.nextInt(100);
-        int fthRand = rn.nextInt(100);
+        int frstRand = rn.nextInt(100) +1;
+        int scdRand = rn.nextInt(100) +1;
+        int thrdRand = rn.nextInt(100) +1;
+        int fthRand = rn.nextInt(100) +1;
         int sum = frstRand + scdRand + thrdRand + fthRand;
         BlockingQueue<String> bq = new ArrayBlockingQueue<>(sum);
         BlockingQueue<String> destroyer = new ArrayBlockingQueue<>(sum);
